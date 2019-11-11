@@ -21,5 +21,4 @@ app.py
 yarn-error.log*
 .idea
 .vscode
-
-.src/environment
+package-lock.json
