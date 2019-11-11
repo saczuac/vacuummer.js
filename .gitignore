@@ -20,5 +20,6 @@ yarn-debug.log*
 app.py
 yarn-error.log*
 .idea
+pp.pdf
 .vscode
 package-lock.json
