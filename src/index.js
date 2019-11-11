@@ -90,18 +90,6 @@ const cleanMatrix = async (matrix, matrixSize) => {
             }
         }
 
-        console.log(`%c Near CLEAN ones:`, 'background: #222; color: #fffff')
-
-        for (let itemX of nearCleanOnes.values()) {
-            console.log(`%c ${itemX}`, 'background: #222; color: #fffff')
-        }
-
-        console.log(`%c Near DIRTY ones`, 'background: #222; color: #fffff')
-
-        for (let itemY of nearDirtyOnes.values()) {
-            console.log(`%c ${itemY}`, 'background: #222; color: #fffff')
-        }
-
         if (nearDirtyOnes.size > 0) {
             // Take the first near dirty place
             let it = nearDirtyOnes.values()
