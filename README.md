@@ -45,3 +45,28 @@ Para hacer funcionar la aspiradora, siga los siguientes pasos en la consola de c
 Para poder visualizar el comportamiento de la aspiradora en el navegador se utilizó la sentencia `sleep(500)` en cada iteración de la aspiradora, puede remover esta línea del código fuente si así desea hacerlo y volver a correr los comandos `npm run babel` y `npm start`.
 
 
+### Tiempos de Ejecución
+
+|Tamaño|Tiempo (ms)|
+|------|-----------|
+|5     |          1|
+|10    |         30|
+|25    |        969|
+|50    |      37255|
+
+
+Para la toma de tiempo de ejecución se quitó la línea `sleep(500)` del código fuente.
+
+
+### Conclusión
+
+El tiempo de ejecución crece exponencialmente a medida que se aumenta el tamaño de la matriz, por lo cual el algoritmo no es eficiente.
+
+Se pudo realizar una solución del agente inteligente, la aspiradora es capaz de elegir el mejor camino a la hora de limpiar.
+
+
+## Deploy Heroku
+
+El proyecto se encuentra en producción funcionando en https://vacuummer.herokuapp.com/
+
+
