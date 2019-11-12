@@ -21,8 +21,6 @@ const cleanMatrix = async (matrix, matrixSize) => {
     const startTime = new Date().getTime()
 
     while (cleanOnes.size < matrixElements) {
-        console.log(`%c Cleaned places: ${cleanOnes.size}`, 'background: #222; color: #bada55')
-
         let nearCleanOnes = new Set([])
         let nearDirtyOnes = new Set([])
         visitedOnes.add([x, y])
@@ -114,7 +112,7 @@ const cleanMatrix = async (matrix, matrixSize) => {
         })
     }
 
-    console.log(`%c Cleaned places: ${cleanOnes.size}`, 'background: #222; color: #bada55')
+    console.log(`%c Cleaned places: ${totalCleaned}`, 'background: #222; color: #bada55')
 
     // Final rendering
     renderMatrix(matrix)
@@ -172,6 +170,8 @@ const renderMatrix = (matrix, vacuumPosition=null) => {
 document.getElementById('runButton').addEventListener('click', function () {
     var size = document.getElementById("size").value
     let matrix = buildMatrix(size)
-    var timeConsumed = cleanMatrix(matrix, size)
-    document.getElementById("time").innerHTML = timeConsumed
+    
+    cleanMatrix(matrix, size).then(timeConsumed => 
+        document.getElementById("time").innerHTML = `${timeConsumed} ms`
+    )
 });
