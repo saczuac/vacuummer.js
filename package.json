@@ -4,6 +4,7 @@
   "description": "Final Project for the assignature \"Fundamentos de la Teoría de la Computación\"",
   "main": "index.js",
   "scripts": {
+    "build": "babel --presets es2015 src/index.js -o build/main.bundle.js",
     "babel": "babel --presets es2015 src/index.js -o build/main.bundle.js",
     "start": "http-server"
   },
