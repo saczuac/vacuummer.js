@@ -1,16 +1,9 @@
+const DIRTY = '🗑'
+const CLEAN = '✔'
 
-const DIRTY = 1
-const CLEAN = 0
+const STATES = [CLEAN, DIRTY]
 const VACUUM = '🔥'
 
-
-Set.prototype.difference = function(setB) {
-    var difference = new Set(this);
-    for (var elem of setB) {
-        difference.delete(elem);
-    }
-    return difference;
-}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -43,73 +36,67 @@ const cleanMatrix = async (matrix, matrixSize) => {
             console.log(`%c Cleaning position  x:${x}, y:${y}`, 'background: #222; color: #fffff')
             matrix[x][y] = CLEAN
         } else {
-            cleanOnes.add([x, y])
             console.log(`%c The place x:${x}, y:${y} is already clean`, 'background: #222; color: #fffff')
         }
 
+        nearCleanOnes.add([x, y])
+
         if (y < matrixSize - 1) {
-            if (matrix[x][y + 1] == CLEAN)
-                nearCleanOnes.add([x, y + 1])
-            else
-                nearDirtyOnes.add([x, y + 1])
+            matrix[x][y + 1] == CLEAN ? nearCleanOnes.add([x, y + 1]) : nearDirtyOnes.add([x, y + 1])
 
             if (x < matrixSize - 1) {
-                if (matrix[x + 1][y] == CLEAN)
-                    nearCleanOnes.add([x + 1, y])
-                else
-                    nearDirtyOnes.add([x + 1, y])
+                matrix[x + 1][y] == CLEAN ? nearCleanOnes.add([x + 1, y]) : nearDirtyOnes.add([x + 1, y])
 
-                if (matrix[x + 1][y + 1] == CLEAN)
-                    nearCleanOnes.add([x + 1, y + 1])
-                else
-                    nearDirtyOnes.add([x + 1, y + 1])
+                matrix[x + 1][y + 1] == CLEAN ? nearCleanOnes.add([x + 1, y + 1]) : nearDirtyOnes.add([x + 1, y + 1])
             }
 
             if (x > 0) {
-                if (matrix[x - 1, y] == CLEAN)
-                    nearCleanOnes.add([x - 1, y])
-                else 
-                    nearDirtyOnes.add([x - 1, y])
+                matrix[x - 1][y] == CLEAN ? nearCleanOnes.add([x - 1, y]) : nearDirtyOnes.add([x - 1, y])
 
-                if (matrix[x - 1, y + 1] == CLEAN)
-                    nearCleanOnes.add([x - 1, y + 1])
-                else
-                    nearDirtyOnes.add([x - 1, y + 1])
+                matrix[x - 1][y + 1] == CLEAN ? nearCleanOnes.add([x - 1, y + 1]) : nearDirtyOnes.add([x - 1, y + 1])
             }
         }
 
         if (y > 0) {
-            matrix[x, y - 1] == CLEAN ? nearCleanOnes.add([x, y - 1]) : nearDirtyOnes.add([x, y - 1])
+            matrix[x][y - 1] == CLEAN ? nearCleanOnes.add([x, y - 1]) : nearDirtyOnes.add([x, y - 1])
 
             if (x < matrixSize - 1) {
-                matrix[x + 1, y - 1] == CLEAN ? nearCleanOnes.add([x + 1, y - 1]) : nearDirtyOnes.add([x + 1, y - 1])
+                matrix[x + 1][y - 1] == CLEAN ? nearCleanOnes.add([x + 1, y - 1]) : nearDirtyOnes.add([x + 1, y - 1])
             }
 
             if (x > 0) {
-                matrix[x - 1, y - 1] == CLEAN ? nearCleanOnes.add([x - 1, y - 1]) : nearDirtyOnes.add([x - 1, y - 1])
+                matrix[x - 1][y - 1] == CLEAN ? nearCleanOnes.add([x - 1, y - 1]) : nearDirtyOnes.add([x - 1, y - 1])
             }
         }
 
         if (nearDirtyOnes.size > 0) {
-            // Take the first near dirty place
-            let it = nearDirtyOnes.values()
-            let dirtyPlace = it.next()
+            // Take the last near dirty place
+            let nearDirtyOnesItems = Array.from(nearDirtyOnes)
+            let dirtyPlace = nearDirtyOnesItems[nearDirtyOnesItems.length - 1]
 
-            x = dirtyPlace.value[0]
-            y = dirtyPlace.value[1]
-            nearDirtyOnes.delete(dirtyPlace.value)
+            x = dirtyPlace[0]
+            y = dirtyPlace[1]
         } else {
-            let diff = nearCleanOnes.difference(visitedOnes)
+            let diff = new Set(nearCleanOnes)
+
+            for (var elem of nearCleanOnes) {
+                let visitedOnesJson = JSON.stringify(Array.from(visitedOnes))
+                let elemJson = JSON.stringify(elem)
+
+                if (visitedOnesJson.indexOf(elemJson) != -1)
+                    diff.delete(elem)
+            }
+
             let cleanPlace = null
             
             if (diff.size > 0) {
                 // Takes the first clean place that are not visited
-                let it = diff.values()
-                cleanPlace = it.next().value
+                let diffItems = Array.from(diff)
+                cleanPlace = diffItems[0]
             } else {
                 // Take randomly near clean place
-                let nearCleanOnesItems = Array.from(nearCleanOnes);
-                cleanPlace = nearCleanOnesItems[Math.floor(Math.random() * nearCleanOnesItems.length)];
+                let nearCleanOnesItems = Array.from(nearCleanOnes)
+                cleanPlace = nearCleanOnesItems[Math.floor(Math.random() * nearCleanOnesItems.length)]
             }
 
             x = cleanPlace[0]
@@ -117,12 +104,20 @@ const cleanMatrix = async (matrix, matrixSize) => {
         }
 
         nearCleanOnes.forEach((value) => {
-            cleanOnes.add(value)
+            let cleanOnesJson = JSON.stringify(Array.from(cleanOnes))
+            let valueJson = JSON.stringify(value)
+
+            if (cleanOnesJson.indexOf(valueJson) == -1) 
+                cleanOnes.add(value)
+
             nearCleanOnes.delete(value)
-        });
+        })
     }
 
     console.log(`%c Cleaned places: ${cleanOnes.size}`, 'background: #222; color: #bada55')
+
+    // Final rendering
+    renderMatrix(matrix, [x, y])
 
     const endTime = new Date().getTime()
     return (endTime - startTime)
@@ -136,7 +131,7 @@ const buildMatrix = (matrixSize) => {
 
         for (var j=0; j<matrixSize; j++) {
             // If Math.random() generates a number less than 0.5 the result will be 0 otherwise it should be 1.
-            matrix[i][j] = Math.round(Math.random())
+            matrix[i][j] = STATES[Math.round(Math.random())]
         }
     }
     
@@ -144,7 +139,7 @@ const buildMatrix = (matrixSize) => {
 }
 
 const renderMatrix = (matrix, vacuumPosition=null) => {
-    let tableDiv = document.getElementById('tableDiv')
+    let tableDiv = vacuumPosition ? document.getElementById('tableDiv') : document.getElementById('firstTableDiv')
 
     // Remove all childs of the tableDiv (previously tables)
     while (tableDiv.firstChild) tableDiv.removeChild(tableDiv.firstChild)
