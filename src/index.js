@@ -29,7 +29,7 @@ const cleanMatrix = async (matrix, matrixSize) => {
 
         // Render the matrix with the vacuum in the actual position
         renderMatrix(matrix, [x, y])
-        await sleep(1000);
+        await sleep(500);
 
         if (matrix[x][y] == DIRTY) {
             totalCleaned++
@@ -117,7 +117,7 @@ const cleanMatrix = async (matrix, matrixSize) => {
     console.log(`%c Cleaned places: ${cleanOnes.size}`, 'background: #222; color: #bada55')
 
     // Final rendering
-    renderMatrix(matrix, [x, y])
+    renderMatrix(matrix)
 
     const endTime = new Date().getTime()
     return (endTime - startTime)
@@ -139,7 +139,7 @@ const buildMatrix = (matrixSize) => {
 }
 
 const renderMatrix = (matrix, vacuumPosition=null) => {
-    let tableDiv = vacuumPosition ? document.getElementById('tableDiv') : document.getElementById('firstTableDiv')
+    let tableDiv = document.getElementById('tableDiv')
 
     // Remove all childs of the tableDiv (previously tables)
     while (tableDiv.firstChild) tableDiv.removeChild(tableDiv.firstChild)
